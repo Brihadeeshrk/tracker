@@ -1,4 +1,4 @@
-import { Theme } from "@radix-ui/themes";
+import { Container, Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -34,7 +34,9 @@ export default function RootLayout({
           appearance="inherit"
         >
           <NavBar />
-          <main className="p-5">{children}</main>
+          <Container size="4">
+            <main className="p-5">{children}</main>
+          </Container>
         </Theme>
       </body>
     </html>
