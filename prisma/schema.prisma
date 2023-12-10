@@ -9,3 +9,22 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Issue {
+  id          Int      @id @default(autoincrement())
+  // By default, when we declare a column as String in mysql, it will be translated to a column with varchar(191), as in, a string with 191chara. but if we want to override this char count, we can use the following
+  title       String   @db.VarChar(255)
+  // when you know the text to be stored is going to be lengthy, we can just use db.Text
+  description String   @db.Text
+  status      Status   @default(OPEN)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// convention is to use caps and eacg value is to be in a separate line
+// note that, enums are supported in mysql, but if youre going to use another provider, make sure to check if that provider supports enums
+enum Status {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
