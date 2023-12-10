@@ -1,15 +1,17 @@
 "use client";
 
-import { Button, Callout, Link, Text, TextField } from "@radix-ui/themes";
-import "easymde/dist/easymde.min.css";
-import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import SimpleMde from "react-simplemde-editor";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { CiCircleInfo } from "react-icons/ci";
-import { zodResolver } from "@hookform/resolvers/zod";
+import ErrorMessage from "@/app/components/ErrorMessage";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 import { createIssueSchema } from "@/app/validationSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Callout, Text, TextField } from "@radix-ui/themes";
+import axios from "axios";
+import "easymde/dist/easymde.min.css";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { CiCircleInfo } from "react-icons/ci";
+import SimpleMde from "react-simplemde-editor";
 import { z } from "zod";
 
 /**
@@ -30,17 +32,19 @@ const NewIssuePage: React.FC = () => {
     resolver: zodResolver(createIssueSchema),
   });
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const onSubmit = async (data: IssueForm) => {
+    setLoading(true);
     try {
       await axios.post("/api/issues", data);
-      setSuccess(true);
-      setTimeout(() => {
-        router.push("/issues");
-      }, 2000);
+      setLoading(false);
+
+      router.push("/issues");
     } catch (error: any) {
+      setLoading(false);
       console.log("Error encountered", error);
       setError("An unexpected error occurred.");
     }
@@ -57,24 +61,11 @@ const NewIssuePage: React.FC = () => {
         </Callout.Root>
       )}
 
-      {success && (
-        <Callout.Root color="green">
-          <Callout.Icon>
-            <CiCircleInfo />
-          </Callout.Icon>
-          <Callout.Text>Issue created</Callout.Text>
-        </Callout.Root>
-      )}
-
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-7">
         <TextField.Root>
           <TextField.Input placeholder="Title" {...register("title")} />
         </TextField.Root>
-        {errors.title && (
-          <Text color="red" as="p">
-            {errors.title.message}
-          </Text>
-        )}
+        {errors.title && <ErrorMessage message={errors.title.message} />}
         {/* you can't use {...register("title")} for the simpleMDE as it doesn't allow any extra props, so we need to use the Controller from React Hook Form */}
         <Controller
           name="description"
@@ -84,12 +75,12 @@ const NewIssuePage: React.FC = () => {
           )}
         ></Controller>
         {errors.description && (
-          <Text color="red" as="p">
-            {errors.description.message}
-          </Text>
+          <ErrorMessage message={errors.description.message} />
         )}
 
-        <Button variant="soft">Submit issue</Button>
+        <Button disabled={loading} variant="soft">
+          {loading ? <LoadingSpinner /> : "Submit issue"}
+        </Button>
       </form>
     </div>
   );
