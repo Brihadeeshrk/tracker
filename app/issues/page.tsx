@@ -1,7 +1,6 @@
 import prisma from "@/prisma/client";
 import { Table } from "@radix-ui/themes";
 import cn from "classnames";
-import delay from "delay";
 import React from "react";
 import StatusBadge from "../components/StatusBadge";
 import IssueActions from "./IssueActions";
@@ -32,7 +31,7 @@ const IssuesPage: React.FC<pageProps> = async () => {
           {issues.map((issue) => (
             <Table.Row key={issue.id}>
               <Table.Cell className="flex items-center">
-                <Link href={`/issues/${issue.id}`}>
+                <Link href={`/issues/${issue.id}`} className="hover:underline">
                   {issue.title}
                   <div
                     className={cn({

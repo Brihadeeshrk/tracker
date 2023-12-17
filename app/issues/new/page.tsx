@@ -11,8 +11,12 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { CiCircleInfo } from "react-icons/ci";
-import SimpleMde from "react-simplemde-editor";
 import { z } from "zod";
+import dynamic from "next/dynamic";
+
+const SimpleMde = dynamic(() => import("react-simplemde-editor"), {
+  ssr: false,
+});
 
 /**
  * In the previous implementation where we had an interface called IssueForm with 2 fields,
