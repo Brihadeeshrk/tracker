@@ -1,17 +1,14 @@
-import prisma from "@/prisma/client";
 import { Table } from "@radix-ui/themes";
 import cn from "classnames";
-import delay from "delay";
 import React from "react";
-import StatusBadge from "../components/StatusBadge";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import IssueActions from "./IssueActions";
-import Link from "next/link";
 
-type pageProps = {};
+type LoadingProps = {};
 
-const IssuesPage: React.FC<pageProps> = async () => {
-  const issues = await prisma.issue.findMany();
-
+const Loading: React.FC<LoadingProps> = () => {
+  const issues = [1, 2, 3, 4, 5];
   return (
     <div className="space-y-7">
       <IssueActions />
@@ -29,29 +26,22 @@ const IssuesPage: React.FC<pageProps> = async () => {
         </Table.Header>
 
         <Table.Body>
-          {issues.map((issue) => (
-            <Table.Row key={issue.id}>
+          {issues.map((issue, index) => (
+            <Table.Row key={index}>
               <Table.Cell className="flex items-center">
-                <Link href={`/issues/${issue.id}`}>
-                  {issue.title}
-                  <div
-                    className={cn({
-                      "block font-semibold md:hidden ml-3": true,
-                    })}
-                  >
-                    <StatusBadge type={issue.status} />
-                  </div>
-                </Link>
+                <Skeleton />
               </Table.Cell>
+
               <Table.Cell
                 className={cn({
                   "hidden font-semibold md:table-cell": true,
                 })}
               >
-                <StatusBadge type={issue.status} />
+                <Skeleton />
               </Table.Cell>
+
               <Table.Cell className="hidden md:table-cell">
-                {issue.createdAt.toDateString()}
+                <Skeleton />
               </Table.Cell>
             </Table.Row>
           ))}
@@ -60,4 +50,4 @@ const IssuesPage: React.FC<pageProps> = async () => {
     </div>
   );
 };
-export default IssuesPage;
+export default Loading;
