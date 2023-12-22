@@ -17,7 +17,6 @@ const EditIssuePage: React.FC<EditIssuePageProps> = async ({ params }) => {
   return (
     <div>
       <IssueForm issue={issue} />
-      {/* <EditStatus /> */}
     </div>
   );
 };

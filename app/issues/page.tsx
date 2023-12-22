@@ -59,4 +59,7 @@ const IssuesPage: React.FC<pageProps> = async () => {
     </div>
   );
 };
+
+export const dynamic = "force-dynamic";
+// export const revalidate = 0;
 export default IssuesPage;

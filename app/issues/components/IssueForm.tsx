@@ -53,13 +53,32 @@ const IssueForm: React.FC<Props> = ({ issue }) => {
         data.status = selectedStatus;
         await axios.patch(`/api/issues/${issue.id}`, data);
         setLoading(false);
-        return;
+
+        router.push("/issues");
+        router.refresh();
       }
       await axios.post("/api/issues", data);
       setLoading(false);
 
       router.push("/issues");
+      router.refresh();
     } catch (error: any) {
+      setLoading(false);
+      console.log("Error encountered", error);
+      setError("An unexpected error occurred.");
+    }
+  };
+
+  const onDelete = async () => {
+    setLoading(true);
+    try {
+      console.log("INSIDE ONDELETE");
+      await axios.delete(`/api/issues/${issue?.id}`);
+      setLoading(false);
+
+      router.push("/issues");
+      router.refresh();
+    } catch (error) {
       setLoading(false);
       console.log("Error encountered", error);
       setError("An unexpected error occurred.");
@@ -100,24 +119,37 @@ const IssueForm: React.FC<Props> = ({ issue }) => {
         )}
 
         {issue && (
-          <div className="flex items-center gap-6">
-            <Text>Update Status:</Text>
-            <Select.Root
-              defaultValue={selectedStatus}
-              onValueChange={(e) => setSelectedStatus(e)}
-            >
-              <Select.Trigger variant="soft" radius="full" />
-              <Select.Content>
-                <Select.Group>
-                  <Select.Label>Status</Select.Label>
-                  {options.map((status, index) => (
-                    <Select.Item key={index} value={status}>
-                      {status}
-                    </Select.Item>
-                  ))}
-                </Select.Group>
-              </Select.Content>
-            </Select.Root>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-6">
+              <Text>Update Status:</Text>
+              <Select.Root
+                defaultValue={selectedStatus}
+                onValueChange={(e) => setSelectedStatus(e)}
+              >
+                <Select.Trigger variant="soft" radius="full" />
+                <Select.Content>
+                  <Select.Group>
+                    <Select.Label>Status</Select.Label>
+                    {options.map((status, index) => (
+                      <Select.Item key={index} value={status}>
+                        {status}
+                      </Select.Item>
+                    ))}
+                  </Select.Group>
+                </Select.Content>
+              </Select.Root>
+            </div>
+
+            <div>
+              <Button
+                type="button"
+                onClick={onDelete}
+                color="red"
+                variant="soft"
+              >
+                {loading ? <LoadingSpinner /> : "Delete issue"}
+              </Button>
+            </div>
           </div>
         )}
 

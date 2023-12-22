@@ -30,3 +30,15 @@ export async function PATCH(
 
   return NextResponse.json(updatedIssue);
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  console.log("INSIDE API", params.id);
+  const deletedIssue = await prisma.issue.delete({
+    where: { id: parseInt(params.id) },
+  });
+
+  return NextResponse.json(deletedIssue);
+}
