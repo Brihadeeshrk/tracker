@@ -35,10 +35,16 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  console.log("INSIDE API", params.id);
-  const deletedIssue = await prisma.issue.delete({
+  const issue = await prisma.issue.findUnique({
     where: { id: parseInt(params.id) },
   });
 
-  return NextResponse.json(deletedIssue);
+  if (!issue)
+    return NextResponse.json({ error: "Invalid Issue" }, { status: 404 });
+
+  await prisma.issue.delete({
+    where: { id: issue.id },
+  });
+
+  return NextResponse.json({});
 }

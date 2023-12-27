@@ -4,7 +4,15 @@ import ErrorMessage from "@/app/components/ErrorMessage";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import { issueSchema } from "@/app/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Callout, Select, Text, TextField } from "@radix-ui/themes";
+import {
+  AlertDialog,
+  Button,
+  Callout,
+  Flex,
+  Select,
+  Text,
+  TextField,
+} from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
@@ -72,7 +80,6 @@ const IssueForm: React.FC<Props> = ({ issue }) => {
   const onDelete = async () => {
     setLoading(true);
     try {
-      console.log("INSIDE ONDELETE");
       await axios.delete(`/api/issues/${issue?.id}`);
       setLoading(false);
 
@@ -141,14 +148,33 @@ const IssueForm: React.FC<Props> = ({ issue }) => {
             </div>
 
             <div>
-              <Button
-                type="button"
-                onClick={onDelete}
-                color="red"
-                variant="soft"
-              >
-                {loading ? <LoadingSpinner /> : "Delete issue"}
-              </Button>
+              <AlertDialog.Root>
+                <AlertDialog.Trigger>
+                  <Button type="button" color="red">
+                    {loading ? <LoadingSpinner /> : "Delete issue"}
+                  </Button>
+                </AlertDialog.Trigger>
+                <AlertDialog.Content style={{ maxWidth: 450 }}>
+                  <AlertDialog.Title>Delete issue</AlertDialog.Title>
+                  <AlertDialog.Description size="2">
+                    Are you sure? This issue will be deleted and this action
+                    cannot be reverted.
+                  </AlertDialog.Description>
+
+                  <Flex gap="3" mt="4" justify="end">
+                    <AlertDialog.Cancel>
+                      <Button variant="soft" color="gray">
+                        Cancel
+                      </Button>
+                    </AlertDialog.Cancel>
+                    <AlertDialog.Action>
+                      <Button onClick={onDelete} variant="solid" color="red">
+                        Delete issue
+                      </Button>
+                    </AlertDialog.Action>
+                  </Flex>
+                </AlertDialog.Content>
+              </AlertDialog.Root>
             </div>
           </div>
         )}
